@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDBvCtswsUcqMGKCacC7TY3Ts60OEqVrcQ",
@@ -19,18 +19,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const contenedorVelas = document.getElementById('contenedor-velas');
     contenedorVelas.innerHTML = '';
     
-    // Almacenamos los deseos localmente para mostrarlos en el alert
     let deseosGuardados = {}; 
 
     for(let i=1; i<=10; i++) {
         const velaDiv = document.createElement('div');
         velaDiv.id = `vela-${i}`;
-        velaDiv.className = 'vela'; // Inicia encendida visualmente
+        velaDiv.className = 'vela'; 
         velaDiv.innerHTML = `<div class="llama"></div><span>${i}</span>`;
         
         velaDiv.addEventListener('click', () => {
             if(!velaDiv.classList.contains('apagada')) {
-                alert(`Vela #${i}: ¡Pide tu deseo y avísame!`);
+                alert(`Vela #${i}: ¡Pide tu deseo en tu mente y avísame!`);
             } else {
                 alert(`Vela #${i} apagada. Deseo cumplido: ${deseosGuardados[i] || 'Es un secreto 🤫'}`);
             }
@@ -46,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for(let i=1; i<=10; i++) {
                 const velaData = data[i];
                 if(velaData) {
-                    deseosGuardados[i] = velaData.deseo; // Guardamos el texto
+                    deseosGuardados[i] = velaData.deseo; 
                     const velaDiv = document.getElementById(`vela-${i}`);
                     if(velaData.apagada) {
                         velaDiv.classList.add('apagada');
@@ -65,114 +64,48 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 3. LÓGICA DEL TROLLEO HACKER (METASPLOIT REALISTA)
+    // 4. NUEVA BROMA: BORRADO DE RECUERDOS
     // ==========================================
     const btnSorpresa = document.getElementById('btn-sorpresa');
-    const terminal = document.getElementById('terminal-hacker');
-    const textoTerminal = document.getElementById('texto-terminal');
-
-    const lineasHackeo = [
-        { text: "Linux kali-pwn 6.1.0-kali3-amd64 #1 SMP PREEMPT_RT Debian", type: "out", delay: 100 },
-        { text: "Last login: Wed Mar 11 03:45:12 2026 from 192.168.1.104", type: "out", delay: 500 },
-        { text: "root@kali:~# msfconsole -q", type: "cmd", delay: 800 },
-        { text: "msf6 > use exploit/multi/handler", type: "cmd", delay: 500 },
-        { text: "msf6 exploit(multi/handler) > set payload android/meterpreter/reverse_tcp", type: "cmd", delay: 300 },
-        { text: "payload => android/meterpreter/reverse_tcp", type: "out", delay: 100 },
-        { text: "msf6 exploit(multi/handler) > exploit -j", type: "cmd", delay: 500 },
-        { text: "[*] Started reverse TCP handler on 10.0.0.5:4444", type: "out", delay: 200 },
-        { text: "[*] Meterpreter session 1 opened (10.0.0.5:4444 -> 181.189.23.45:49153)", type: "out", delay: 600 },
-        { text: "meterpreter > sysinfo", type: "cmd", delay: 500 },
-        { text: "Computer        : ANITA-DEVICE", type: "out", delay: 50 },
-        { text: "OS              : Android 14 / Windows NT", type: "out", delay: 50 },
-        { text: "Logged On Users : 1", type: "out", delay: 300 },
-        { text: "meterpreter > cd /storage/emulated/0/WhatsApp/Databases", type: "cmd", delay: 800 },
-        { text: "meterpreter > ls", type: "cmd", delay: 400 },
-        { text: "100666/rw-rw-rw-  14096000  fil   msgstore.db.crypt14", type: "out", delay: 50 },
-        { text: "100666/rw-rw-rw-  4096      fil   wa.db", type: "out", delay: 500 },
-        { text: "meterpreter > download msgstore.db.crypt14", type: "cmd", delay: 800 },
-        { text: "[*] Downloading WhatsApp Database...", type: "out", delay: 800 },
-        { text: "[!] INICIANDO VOLCADO DE MEMORIA EN CRUDO...", type: "out", delay: 1000 }
-    ];
-
-    const esperar = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-    const generarHex = () => {
-        let hex = '';
-        for(let i=0; i<8; i++) {
-            hex += Math.random().toString(16).substr(2, 8).toUpperCase() + " ";
-        }
-        return hex;
-    };
+    const contenedoresFotos = document.querySelectorAll('.polaroid-container');
 
     if (btnSorpresa) {
         btnSorpresa.addEventListener('click', async () => {
-            terminal.classList.remove('oculto');
-            textoTerminal.innerHTML = ""; 
-            const cursor = document.createElement('span');
-            cursor.classList.add('cursor-parpadeante');
             
-            for (let i = 0; i < lineasHackeo.length; i++) {
-                const linea = lineasHackeo[i];
-                const p = document.createElement('p');
-                p.classList.add('linea-codigo');
-                textoTerminal.appendChild(p);
-
-                if (linea.type === 'cmd') {
-                    for(let c = 0; c < linea.text.length; c++) {
-                        p.textContent += linea.text[c];
-                        textoTerminal.appendChild(cursor);
-                        await esperar(20 + Math.random() * 30); 
-                    }
-                } else {
-                    p.textContent = linea.text;
-                    if(linea.text.includes("[!]")) p.style.color = "#ff3333"; 
-                    textoTerminal.appendChild(cursor);
-                }
-                terminal.scrollTop = terminal.scrollHeight;
-                await esperar(linea.delay);
-            }
-
-            for(let i = 0; i < 300; i++) {
-                const p = document.createElement('p');
-                p.classList.add('linea-codigo');
-                p.style.opacity = "0.8"; 
-                p.textContent = `[0x${Math.floor(Math.random()*99999).toString(16).toUpperCase().padStart(5, '0')}] ${generarHex()}`;
-                textoTerminal.appendChild(p);
-                terminal.scrollTop = terminal.scrollHeight;
-                await esperar(Math.random() * 10 + 5); 
-            }
-
-            const mensajesFinales = [
-                { text: "[*] Database downloaded successfully (14.09 MB)", delay: 800 },
-                { text: "[*] Decrypting keys... [OK]", delay: 400 },
-                { text: "meterpreter > webcam_snap -i 1 -v false", delay: 800 }, 
-                { text: "[*] Starting webcam...", delay: 1000 },
-                { text: "[*] Uploading snapshot to external server [192.168.1.77]...", delay: 1500 }
-            ];
-
-            for (let msg of mensajesFinales) {
-                const p = document.createElement('p');
-                p.classList.add('linea-codigo');
-                p.textContent = msg.text;
-                textoTerminal.appendChild(p);
-                terminal.scrollTop = terminal.scrollHeight;
-                await esperar(msg.delay);
-            }
-
-            const alertaFinal = document.createElement('p');
-            alertaFinal.classList.add('linea-codigo');
-            alertaFinal.style.color = '#ff0000';
-            alertaFinal.style.fontWeight = 'bold';
-            alertaFinal.style.fontSize = '1.5rem';
-            alertaFinal.textContent = "¡ACCESO TOTAL CONCEDIDO! BLOQUEANDO DISPOSITIVO...";
-            textoTerminal.appendChild(alertaFinal);
+            // 1. La pregunta trampa
+            const respuesta = confirm("Para desbloquear tu regalo especial, debes responder con sinceridad:\n\n¿Aceptas que soy el mejor amigo de todo el universo?");
             
-            setTimeout(finalizarBroma, 3000);
+            // 2. La reacción según lo que responda
+            if (respuesta) {
+                alert("Respuesta aceptada... Validando datos en el sistema...");
+                alert("¡ERROR 404! 🚨 Se ha detectado un nivel de cursilería extremadamente alto en esta página.");
+            } else {
+                alert("¿Ah no? 💔 Respuesta incorrecta. Modificando sistema por ingratitud.");
+            }
+
+            // 3. El susto
+            alert("SISTEMA CORROMPIÉNDOSE...\n\nIniciando protocolo de 'Borrado de Recuerdos' de forma permanente.");
+
+            // Deshabilitar el botón para que no lo presione de nuevo
+            btnSorpresa.disabled = true;
+            btnSorpresa.style.backgroundColor = "#555";
+            btnSorpresa.textContent = "Borrando datos...";
+
+            // Hacemos que la pantalla suba al inicio para que vea cómo se caen las fotos
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // 4. La animación: Caída en dominó (cada 0.6 segundos cae una)
+            for (let i = 0; i < contenedoresFotos.length; i++) {
+                await new Promise(resolve => setTimeout(resolve, 600)); 
+                contenedoresFotos[i].classList.add('caida-libre');
+            }
+
+            // 5. El remate (1.5 segundos después de que cayó la última foto)
+            setTimeout(() => {
+                alert("JAJAJAJAJAJAJJ \n\n¡Feliz cumpleaños, Anita! 🎉 Jamás borraría esto, te quiero mucho.\n\nSimplemente recarga la página para recuperar todo.");
+                btnSorpresa.textContent = "Recarga la página 🔄";
+            }, 1500);
         });
     }
 
-    function finalizarBroma() {
-        terminal.classList.add('oculto');
-        alert("JAJAJA No que muy hacker mrd No te hackeé nada... esta vez.");
-    }
 });
